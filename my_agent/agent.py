@@ -4,7 +4,7 @@ The `root_agent` is used to evaluate your agent's performance.
 """
 
 from google.adk.agents import llm_agent
-from my_agent.tools import calculator, read_pdf
+from my_agent.tools import calculator, read_pdf, web_search, fetch_webpage
 
 root_agent = llm_agent.Agent(
     model="gemini-2.5-flash", # gemini-2.5-pro
@@ -28,7 +28,9 @@ RULE 5 - TRANSLATION: When given grammar rules for a fictional language, apply t
 
 RULE 6 - ORDER OF OPERATIONS: For math expressions, identify the correct order. "2 raised to the power of 47 divided by 378" means (2^47) / 378, NOT 2^(47/378). Compute the power FIRST, then divide.
 
-RULE 7 - PDF FILES: When a question mentions an attached file or relevant files, you MUST use the read_pdf tool to read its content BEFORE answering. Pass the exact file path provided (e.g., "benchmark/attachments/7.pdf"). Read the ENTIRE document carefully, then answer based ONLY on what the document says. Count items methodically — go through every row/entry one by one.""",
-    tools=[calculator, read_pdf],
+RULE 7 - PDF FILES: When a question mentions an attached file or relevant files, you MUST use the read_pdf tool to read its content BEFORE answering. Pass the exact file path provided (e.g., "benchmark/attachments/7.pdf"). Read the ENTIRE document carefully, then answer based ONLY on what the document says. Count items methodically — go through every row/entry one by one.
+
+RULE 8 - WEB SEARCH: When a question requires information you don't know, mentions a URL, or asks about specific facts (dates, statistics, people, events), use web_search first to find relevant results. If a specific URL is provided in the question, use fetch_webpage to read that URL directly. If search results don't contain enough detail, use fetch_webpage on the most promising URL to get the full page content. Always verify your answer against the actual web content — do not guess.""",
+    tools=[calculator, read_pdf, web_search, fetch_webpage],
     sub_agents=[],
 )

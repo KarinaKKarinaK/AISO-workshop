@@ -14,4 +14,6 @@ dependencies = [
     "pymupdf",
     "beautifulsoup4>=4.14.3",
     "ddgs",
+    "requests>=2.32.5",
+    "html2text>=2025.4.15",
 ]
