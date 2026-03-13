@@ -9,6 +9,7 @@ __pycache__/
 
 # Virtual environment
 .venv/
+.env
 
 # Evaluation results
 evaluation_results_*.json
