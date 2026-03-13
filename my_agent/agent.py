@@ -4,10 +4,10 @@ The `root_agent` is used to evaluate your agent's performance.
 """
 
 from google.adk.agents import llm_agent
-from my_agent.tools import calculator
+from my_agent.tools import calculator, read_pdf
 
 root_agent = llm_agent.Agent(
-    model="gemini-2.5-flash",
+    model="gemini-2.5-flash", # gemini-2.5-pro
     name="agent",
     description="A helpful assistant.",
     instruction="""You are an expert problem-solving assistant. Follow these rules strictly:
@@ -26,7 +26,9 @@ RULE 5 - TRANSLATION: When given grammar rules for a fictional language, apply t
 - Use the correct case form (nominative/accusative/genitive) for each role
 - Assemble in the GIVEN word order
 
-RULE 6 - ORDER OF OPERATIONS: For math expressions, identify the correct order. "2 raised to the power of 47 divided by 378" means (2^47) / 378, NOT 2^(47/378). Compute the power FIRST, then divide.""",
-    tools=[calculator],
+RULE 6 - ORDER OF OPERATIONS: For math expressions, identify the correct order. "2 raised to the power of 47 divided by 378" means (2^47) / 378, NOT 2^(47/378). Compute the power FIRST, then divide.
+
+RULE 7 - PDF FILES: When a question mentions an attached file or relevant files, you MUST use the read_pdf tool to read its content BEFORE answering. Pass the exact file path provided (e.g., "benchmark/attachments/7.pdf"). Read the ENTIRE document carefully, then answer based ONLY on what the document says. Count items methodically — go through every row/entry one by one.""",
+    tools=[calculator, read_pdf],
     sub_agents=[],
 )

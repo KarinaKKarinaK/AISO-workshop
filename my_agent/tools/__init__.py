@@ -1,2 +1,4 @@
 from .calculator import calculator
-__all__ = ["calculator"]
+from .read_pdf import read_pdf
+
+__all__ = ["calculator", "read_pdf"]
