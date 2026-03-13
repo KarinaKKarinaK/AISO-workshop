@@ -110,9 +110,14 @@ class ADKAgentRunner:
     def _extract_response_details(
         events: list[dict[str, Any]],
     ) -> tuple[str, list[str]]:
-        """Extract response text and tool call names from ADK events."""
+        """Extract response text and tool call names from ADK events.
+
+        Some model/tool interactions may stop after a tool response without
+        emitting text content. In that case, fall back to the latest tool result.
+        """
         response_parts: list[str] = []
         tool_calls: list[str] = []
+        tool_results: list[str] = []
 
         for event in events:
             content = event.get("content")
@@ -130,7 +135,19 @@ class ADKAgentRunner:
                     if name:
                         tool_calls.append(name)
 
-        return "".join(response_parts).strip(), tool_calls
+                function_response = part.get("functionResponse")
+                if function_response:
+                    response_payload = function_response.get("response")
+                    if isinstance(response_payload, dict) and "result" in response_payload:
+                        result_text = str(response_payload.get("result", "")).strip()
+                    else:
+                        result_text = str(response_payload).strip()
+                    if result_text:
+                        tool_results.append(result_text)
+        final_text = "".join(response_parts).strip()
+        if not final_text and tool_results:
+            final_text = tool_results[-1]
+        return final_text, tool_calls
 
     def run_agent(
         self, question: str, file_paths: list[str] | None = None
